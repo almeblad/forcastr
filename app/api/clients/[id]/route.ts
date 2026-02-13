@@ -4,7 +4,7 @@ import { clients } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { currentUser } from '@clerk/nextjs/server';
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await currentUser();
   if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
