@@ -112,8 +112,9 @@ export const calculateMonthlyStats = (
             const hours = assignmentWorkDays * 8;
             const allocation = (assignment.allocationPercent || 100) / 100;
             const rate = assignment.hourlyRate || 0;
+            const brokerFee = Number(assignment.brokerFeePercent || 0) / 100;
             
-            projectedRevenue += hours * allocation * rate;
+            projectedRevenue += (hours * allocation * rate) * (1 - brokerFee);
         }
     });
 
