@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { workspaces, salaries, taxSettings, absences } from "@/db/schema";
+import { workspaces, salaries, taxSettings, absences, assignments } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { SalaryPlanner } from "@/components/salary-planner";
 import { DEFAULT_TAX_SETTINGS_2026, TaxYearSettings } from "@/lib/calculations";
@@ -50,11 +50,16 @@ export default async function SalaryPage() {
     where: eq(absences.workspaceId, workspace.id),
   });
 
+  // Fetch assignments for revenue stats
+  const assignmentEntries = await db.query.assignments.findMany({
+      where: eq(assignments.workspaceId, workspace.id),
+  });
+
   // Fetch holidays
   const holidays = await getHolidaysAndBridgeDays(currentYear);
 
-  // Calculate monthly stats (workable hours, absence days)
-  const monthlyStats = calculateMonthlyStats(currentYear, absenceEntries, holidays);
+  // Calculate monthly stats (workable hours, absence days, revenue)
+  const monthlyStats = calculateMonthlyStats(currentYear, absenceEntries, holidays, assignmentEntries);
 
   // Prepare data for the client component
   // Map DB entries to a format suitable for the UI (key by month)

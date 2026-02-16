@@ -188,38 +188,52 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, mont
 
           return (
             <Card key={month.id} className="bg-white">
-              <div className="flex flex-col md:flex-row items-center p-4 gap-4">
-                <div className="w-full md:w-32 font-semibold flex flex-col">
-                    <span>{month.name}</span>
-                    <span className="text-xs text-muted-foreground font-normal">
-                        Arbetstid: {workableHours}h
-                    </span>
-                    {absenceDays > 0 && (
-                        <span className="text-xs text-amber-600 font-normal mt-0.5">
-                           Frånvaro: {absenceDays} {absenceDays === 1 ? 'dag' : 'dagar'}
+                  <div className="flex flex-col md:flex-row items-center p-4 gap-4">
+                    <div className="w-full md:w-32 font-semibold flex flex-col">
+                        <span>{month.name}</span>
+                        <span className="text-xs text-muted-foreground font-normal">
+                            Arbetstid: {workableHours}h
                         </span>
-                    )}
-                </div>
-                
-                <div className="flex-1 space-y-2 w-full">
-                  <div className="flex justify-between text-sm">
-                    <Label>Bruttolön</Label>
-                    <span className="font-mono">{formatSEK(currentSalary)} kr</span>
-                  </div>
-                  <Slider
-                    defaultValue={[currentSalary]}
-                    value={[currentSalary]}
-                    max={100000}
-                    step={1000}
-                    onValueChange={(val) => handleSalaryChange(month.id, val[0])}
-                  />
-                </div>
+                        {absenceDays > 0 && (
+                            <span className="text-xs text-amber-600 font-normal mt-0.5">
+                               Frånvaro: {absenceDays} {absenceDays === 1 ? 'dag' : 'dagar'}
+                            </span>
+                        )}
+                    </div>
+                    
+                    <div className="flex-1 space-y-2 w-full">
+                      <div className="flex justify-between text-sm">
+                        <Label>Bruttolön</Label>
+                        <span className="font-mono">{formatSEK(currentSalary)} kr</span>
+                      </div>
+                      <Slider
+                        defaultValue={[currentSalary]}
+                        value={[currentSalary]}
+                        max={100000}
+                        step={1000}
+                        onValueChange={(val) => handleSalaryChange(month.id, val[0])}
+                      />
+                    </div>
 
-                <div className="w-full md:w-32 text-right text-sm border-t md:border-t-0 pt-2 md:pt-0 mt-2 md:mt-0">
-                   <div className="text-gray-500">Kostnad: {formatSEK(Math.round(costs.totalCost))}</div>
-                   <div className="font-medium text-green-600">Netto: {formatSEK(Math.round(net.netSalary))}</div>
-                </div>
-              </div>
+                    <div className="w-full md:w-32 text-right text-sm border-t md:border-t-0 pt-2 md:pt-0 mt-2 md:mt-0 flex flex-col gap-1">
+                       <div className="text-gray-500">Kostnad: {formatSEK(Math.round(costs.totalCost))}</div>
+                       <div className="font-medium text-green-600">Netto: {formatSEK(Math.round(net.netSalary))}</div>
+                       
+                       {stats && stats.projectedRevenue > 0 && (
+                         <div className={`text-xs font-medium border-t pt-1 mt-1 ${
+                           stats.projectedRevenue >= costs.totalCost ? 'text-green-700' : 'text-red-600'
+                         }`}>
+                            Resultat: {stats.projectedRevenue >= costs.totalCost ? '+' : ''}
+                            {formatSEK(Math.round(stats.projectedRevenue - costs.totalCost))}
+                         </div>
+                       )}
+                       {stats && stats.projectedRevenue === 0 && (
+                         <div className="text-xs text-slate-400 border-t pt-1 mt-1">
+                            Inga intäkter
+                         </div>
+                       )}
+                    </div>
+                  </div>
             </Card>
           );
         })}
