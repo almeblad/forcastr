@@ -43,17 +43,17 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
          <h1 className="text-3xl font-bold">Översikt</h1>
-         <div className="flex gap-2">
-            <Link href="/assignments">
-               <Button>Hantera Uppdrag</Button>
+         <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <Link href="/assignments" className="flex-1 md:flex-none">
+               <Button className="w-full">Hantera Uppdrag</Button>
             </Link>
-            <Link href="/salary">
-               <Button variant="outline">Planera Lön</Button>
+            <Link href="/salary" className="flex-1 md:flex-none">
+               <Button variant="outline" className="w-full">Planera Lön</Button>
             </Link>
-            <Link href="/absence">
-               <Button variant="outline">Lägg in Frånvaro</Button>
+            <Link href="/absence" className="flex-1 md:flex-none">
+               <Button variant="outline" className="w-full">Lägg in Frånvaro</Button>
             </Link>
          </div>
       </div>

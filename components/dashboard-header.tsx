@@ -2,7 +2,7 @@
 
 import { UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu, LayoutDashboard, Wallet, Briefcase, Settings, CalendarOff } from "lucide-react";
 import Link from "next/link";
@@ -45,6 +45,7 @@ export function DashboardHeader() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-64 p-0">
+            <SheetTitle className="sr-only">Navigationsmeny</SheetTitle>
             <div className="h-16 flex items-center px-6 border-b">
               <div className="flex items-center gap-2 font-bold text-xl text-slate-900">
                 <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">F</div>
