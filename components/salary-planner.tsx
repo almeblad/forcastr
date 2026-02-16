@@ -6,11 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { 
   calculateSalaryCost, 
   calculateNetIncome, 
   TaxYearSettings 
 } from "@/lib/calculations";
+import { MonthlyStats } from "@/lib/salary-stats";
 
 // Helper for consistent formatting across SSR/CSR (Swedish locale)
 const formatSEK = (value: number) => {
@@ -39,9 +41,10 @@ type SalaryPlannerProps = {
   workspaceId: string;
   initialSalaryMap: Record<string, { id?: string; grossSalary: number; pensionProvision?: number }>;
   taxSettings: TaxYearSettings;
+  monthlyStats: MonthlyStats[];
 };
 
-export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings }: SalaryPlannerProps) {
+export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, monthlyStats }: SalaryPlannerProps) {
   const [salaries, setSalaries] = useState(initialSalaryMap);
   const [syncAllMonths, setSyncAllMonths] = useState(false);
 
@@ -64,13 +67,8 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings }: Sa
 
   // Batch save for "Sync All" mode
   const debouncedBatchSave = useDebouncedCallback(async (grossSalary: number) => {
-     // Sending 12 requests at once is still risky for rate limits, so in a real app
-     // we would create a batch endpoint. For now, we'll just iterate but with the debounce
-     // it happens once at the end of the drag.
      MONTHS.forEach(m => {
         const key = `2026-${m.id}`;
-        // We call the fetch directly here or use a separate batch endpoint
-        // Using the existing endpoint for simplicity but strictly debounced
         fetch("/api/salary", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -182,13 +180,28 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings }: Sa
           const currentSalary = salaries[monthKey]?.grossSalary || 0;
           const costs = calculateSalaryCost(currentSalary, taxSettings);
           const net = calculateNetIncome(currentSalary, taxSettings);
+          
+          // Get stats for this month
+          const stats = monthlyStats.find(s => s.month === monthKey);
+          const absenceDays = stats ? stats.absenceDays : 0;
+          const workableHours = stats ? stats.workableHours : 0;
 
           return (
             <Card key={month.id} className="bg-white">
-              <div className="flex items-center p-4 gap-4">
-                <div className="w-24 font-semibold">{month.name}</div>
+              <div className="flex flex-col md:flex-row items-center p-4 gap-4">
+                <div className="w-full md:w-32 font-semibold flex flex-col">
+                    <span>{month.name}</span>
+                    <span className="text-xs text-muted-foreground font-normal">
+                        Arbetstid: {workableHours}h
+                    </span>
+                    {absenceDays > 0 && (
+                        <span className="text-xs text-amber-600 font-normal mt-0.5">
+                           Frånvaro: {absenceDays} {absenceDays === 1 ? 'dag' : 'dagar'}
+                        </span>
+                    )}
+                </div>
                 
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 space-y-2 w-full">
                   <div className="flex justify-between text-sm">
                     <Label>Bruttolön</Label>
                     <span className="font-mono">{formatSEK(currentSalary)} kr</span>
@@ -202,7 +215,7 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings }: Sa
                   />
                 </div>
 
-                <div className="w-32 text-right text-sm">
+                <div className="w-full md:w-32 text-right text-sm border-t md:border-t-0 pt-2 md:pt-0 mt-2 md:mt-0">
                    <div className="text-gray-500">Kostnad: {formatSEK(Math.round(costs.totalCost))}</div>
                    <div className="font-medium text-green-600">Netto: {formatSEK(Math.round(net.netSalary))}</div>
                 </div>

@@ -2,9 +2,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { workspaces, absences } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { AbsenceList } from "@/components/absence/absence-list";
 import { CreateAbsenceForm } from "@/components/absence/create-absence-form";
+import { HolidaySuggestions } from "@/components/absence/holiday-suggestions";
 
 export default async function AbsencePage() {
   const user = await currentUser();
@@ -22,7 +23,7 @@ export default async function AbsencePage() {
     .select()
     .from(absences)
     .where(eq(absences.workspaceId, workspace.id))
-    .orderBy(desc(absences.startDate));
+    .orderBy(asc(absences.startDate));
 
   return (
     <div className="space-y-6">
@@ -36,6 +37,7 @@ export default async function AbsencePage() {
       <div className="grid gap-6 md:grid-cols-[350px_1fr]">
         <div className="space-y-6">
           <CreateAbsenceForm workspaceId={workspace.id} />
+          <HolidaySuggestions workspaceId={workspace.id} />
         </div>
         <div>
           <AbsenceList absences={absenceList} />

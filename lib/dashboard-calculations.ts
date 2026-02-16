@@ -13,17 +13,7 @@ export type MonthlyFinancials = {
   profit: number;
 };
 
-// Helper to count workdays in a range (simplified M-F)
-const countWorkDays = (start: Date, end: Date) => {
-  let count = 0;
-  let cur = new Date(start);
-  while (cur <= end) {
-    const dayOfWeek = cur.getDay();
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
-    cur.setDate(cur.getDate() + 1);
-  }
-  return count;
-};
+import { countWorkDays } from './date-utils';
 
 export const calculateMonthlyFinancials = (
   assignments: any[], 

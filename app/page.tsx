@@ -37,12 +37,12 @@ export default async function Home() {
             <span className="text-blue-600">Egna Konsulter</span>
           </h1>
           <p className="text-xl text-slate-600 leading-relaxed">
-            Sluta gissa vad som blir kvar i plånboken. Planera dina uppdrag, optimera din lön 
+            Sluta gissa vad som blir kvar i plånboken. Planera dina uppdrag, optimera din lön
             och prognostisera företagets resultat med precision.
           </p>
-          
+
           <div className="flex items-center justify-center gap-4 pt-4">
-             <Link href={userId ? "/dashboard" : "/sign-up"}>
+            <Link href={userId ? "/dashboard" : "/sign-up"}>
               <Button size="lg" className="h-12 px-8 text-base">
                 Kom igång <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
@@ -61,7 +61,7 @@ export default async function Home() {
               Visualisera dina konsultkontrakt, hantera beläggningsgrad och spåra fakturerbara timmar enkelt.
             </p>
           </div>
-          
+
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
             <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-6">
               <Wallet className="w-6 h-6 text-green-600" />
@@ -87,7 +87,7 @@ export default async function Home() {
       {/* Footer */}
       <footer className="bg-white border-t py-12 mt-20">
         <div className="container mx-auto px-6 text-center text-slate-500">
-          <p>© 2024 Forcastr. Byggt för konsulter.</p>
+          <p>© 2026 Forcastr. Byggt för konsulter.</p>
         </div>
       </footer>
     </div>

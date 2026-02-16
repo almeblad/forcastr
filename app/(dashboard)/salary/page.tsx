@@ -1,10 +1,12 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { workspaces, salaries, taxSettings } from "@/db/schema";
+import { workspaces, salaries, taxSettings, absences } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { SalaryPlanner } from "@/components/salary-planner";
 import { DEFAULT_TAX_SETTINGS_2026, TaxYearSettings } from "@/lib/calculations";
+import { calculateMonthlyStats } from "@/lib/salary-stats";
+import { getHolidaysAndBridgeDays } from "@/lib/holidays";
 
 export default async function SalaryPage() {
   const user = await currentUser();
@@ -43,6 +45,17 @@ export default async function SalaryPage() {
     where: eq(salaries.workspaceId, workspace.id),
   });
 
+  // Fetch absences for stats
+  const absenceEntries = await db.query.absences.findMany({
+    where: eq(absences.workspaceId, workspace.id),
+  });
+
+  // Fetch holidays
+  const holidays = await getHolidaysAndBridgeDays(currentYear);
+
+  // Calculate monthly stats (workable hours, absence days)
+  const monthlyStats = calculateMonthlyStats(currentYear, absenceEntries, holidays);
+
   // Prepare data for the client component
   // Map DB entries to a format suitable for the UI (key by month)
   const salaryMap: Record<string, any> = {};
@@ -61,6 +74,7 @@ export default async function SalaryPage() {
          workspaceId={workspace.id}
          initialSalaryMap={salaryMap}
          taxSettings={activeTaxSettings}
+         monthlyStats={monthlyStats}
        />
     </div>
   );
