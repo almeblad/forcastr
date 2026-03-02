@@ -56,7 +56,7 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
         <Card>
-           <CardHeader className="pb-2">
+           <CardHeader className="pb-1">
              <CardTitle className="text-sm font-medium text-gray-500">Fakturerat (Helår)</CardTitle>
            </CardHeader>
            <CardContent>
@@ -64,7 +64,7 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
            </CardContent>
         </Card>
         <Card>
-           <CardHeader className="pb-2">
+           <CardHeader className="pb-1">
              <CardTitle className="text-sm font-medium text-gray-500">Inbetalt (Helår)</CardTitle>
            </CardHeader>
            <CardContent>
@@ -72,7 +72,7 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
            </CardContent>
         </Card>
         <Card>
-           <CardHeader className="pb-2">
+           <CardHeader className="pb-1">
              <CardTitle className="text-sm font-medium text-gray-500">Mellanhands avgift</CardTitle>
            </CardHeader>
            <CardContent>
@@ -80,7 +80,7 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
            </CardContent>
         </Card>
         <Card>
-           <CardHeader className="pb-2">
+           <CardHeader className="pb-1">
              <CardTitle className="text-sm font-medium text-gray-500">Lönekostnad</CardTitle>
            </CardHeader>
            <CardContent>
@@ -88,7 +88,7 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
            </CardContent>
         </Card>
         <Card>
-           <CardHeader className="pb-2">
+           <CardHeader className="pb-1">
              <CardTitle className="text-sm font-medium text-gray-500">Resultat</CardTitle>
            </CardHeader>
            <CardContent>
