@@ -16,7 +16,8 @@ export async function POST(req: Request) {
     endDate, 
     hourlyRate, 
     allocationPercent,
-    brokerFeePercent
+    brokerFeePercent,
+    paymentTerms
   } = body;
 
   if (!workspaceId || !clientId || !name || !startDate || !endDate) {
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
     hourlyRate,
     allocationPercent,
     brokerFeePercent: String(brokerFeePercent || 0), // Convert to string for decimal/numeric type
+    paymentTerms: Number(paymentTerms || 30),
   }).returning();
 
   return NextResponse.json(created);

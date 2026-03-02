@@ -38,6 +38,8 @@ type Assignment = {
   endDate: string;
   hourlyRate: number;
   allocationPercent: number;
+  paymentTerms: number;
+  brokerFeePercent: string;
 };
 
 export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
@@ -51,6 +53,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
   const [editEndDate, setEditEndDate] = useState("");
   const [editHourlyRate, setEditHourlyRate] = useState("");
   const [editAllocationPercent, setEditAllocationPercent] = useState("");
+  const [editPaymentTerms, setEditPaymentTerms] = useState("");
+  const [editBrokerFeePercent, setEditBrokerFeePercent] = useState("");
 
   const handleDelete = async (id: string) => {
     setIsLoading(true);
@@ -80,6 +84,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
     setEditEndDate(assignment.endDate);
     setEditHourlyRate(assignment.hourlyRate.toString());
     setEditAllocationPercent(assignment.allocationPercent.toString());
+    setEditPaymentTerms(assignment.paymentTerms ? assignment.paymentTerms.toString() : "30");
+    setEditBrokerFeePercent(assignment.brokerFeePercent ? assignment.brokerFeePercent.toString() : "0");
   };
 
   const handleUpdate = async () => {
@@ -97,6 +103,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
           endDate: editEndDate,
           hourlyRate: parseInt(editHourlyRate),
           allocationPercent: parseInt(editAllocationPercent),
+          paymentTerms: parseInt(editPaymentTerms),
+          brokerFeePercent: editBrokerFeePercent,
         }),
       });
 
@@ -192,7 +200,7 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
       </div>
 
       <Dialog open={!!editingAssignment} onOpenChange={(open) => !open && setEditingAssignment(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Redigera uppdrag</DialogTitle>
             <DialogDescription>
@@ -249,6 +257,35 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
                   max="100"
                   value={editAllocationPercent}
                   onChange={(e) => setEditAllocationPercent(e.target.value)}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-paymentTerms" className="text-right">
+                  Betalningsvillkor (dgr)
+                </Label>
+                <Input
+                  id="edit-paymentTerms"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={editPaymentTerms}
+                  onChange={(e) => setEditPaymentTerms(e.target.value)}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-brokerFee" className="text-right">
+                  Mellanhands avgift (%)
+                </Label>
+                <Input
+                  id="edit-brokerFee"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={editBrokerFeePercent}
+                  onChange={(e) => setEditBrokerFeePercent(e.target.value)}
                   className="col-span-3"
                 />
               </div>

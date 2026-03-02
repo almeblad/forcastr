@@ -25,6 +25,7 @@ export const assignments = pgTable('assignments', {
   endDate: date('end_date').notNull(),
   hourlyRate: integer('hourly_rate').notNull(),
   allocationPercent: integer('allocation_percent').default(100).notNull(),
+  paymentTerms: integer('payment_terms').default(30).notNull(), // Payment delay in days
   brokerFeePercent: numeric('broker_fee_percent', { precision: 5, scale: 2 }).default('0'), // e.g. 5.00 for 5%
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

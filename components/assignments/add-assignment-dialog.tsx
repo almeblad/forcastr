@@ -34,7 +34,7 @@ export function AddAssignmentDialog({ workspaceId, clients }: { workspaceId: str
       <DialogTrigger asChild>
         <Button><Plus className="w-4 h-4 mr-2" /> Nytt Uppdrag</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Skapa nytt uppdrag</DialogTitle>
         </DialogHeader>

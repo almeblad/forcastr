@@ -42,6 +42,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
   const [endDate, setEndDate] = useState<Date>();
   const [hourlyRate, setHourlyRate] = useState("1200");
   const [allocation, setAllocation] = useState("100");
+  const [paymentTerms, setPaymentTerms] = useState("30");
   const [hasBroker, setHasBroker] = useState(false);
   const [brokerFee, setBrokerFee] = useState("0");
 
@@ -65,6 +66,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
           hourlyRate: Number(hourlyRate),
           allocationPercent: Number(allocation),
           brokerFeePercent,
+          paymentTerms: Number(paymentTerms),
         }),
       });
       if (onSuccess) {
@@ -182,7 +184,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="rate">Timpris (SEK)</Label>
           <Input 
@@ -201,6 +203,18 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
             max="100"
             value={allocation} 
             onChange={(e) => setAllocation(e.target.value)} 
+            required 
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="paymentTerms">Betalningsvillkor (dgr)</Label>
+          <Input 
+            id="paymentTerms" 
+            type="number" 
+            min="0"
+            step="1"
+            value={paymentTerms} 
+            onChange={(e) => setPaymentTerms(e.target.value)} 
             required 
           />
         </div>
