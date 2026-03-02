@@ -47,10 +47,10 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await req.json();
-  const { endDate, hourlyRate, allocationPercent } = body;
+  const { startDate, endDate, hourlyRate, allocationPercent } = body;
 
   // Validation
-  if (!endDate && !hourlyRate && !allocationPercent) {
+  if (!startDate && !endDate && !hourlyRate && !allocationPercent) {
     return new NextResponse("No fields to update", { status: 400 });
   }
 
@@ -77,6 +77,7 @@ export async function PATCH(
   const [updated] = await db
     .update(assignments)
     .set({
+      ...(startDate && { startDate }),
       ...(endDate && { endDate }),
       ...(hourlyRate && { hourlyRate: parseInt(hourlyRate) }),
       ...(allocationPercent && { allocationPercent: parseInt(allocationPercent) }),

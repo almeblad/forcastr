@@ -8,10 +8,18 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ClientForm } from "@/components/assignments/client-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type Client = {
   id: string;
@@ -36,6 +44,8 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
   const [allocation, setAllocation] = useState("100");
   const [hasBroker, setHasBroker] = useState(false);
   const [brokerFee, setBrokerFee] = useState("0");
+
+  const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,16 +82,37 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label>Kund</Label>
-        <Select onValueChange={setClientId} value={clientId}>
-          <SelectTrigger>
-            <SelectValue placeholder="Välj kund" />
-          </SelectTrigger>
-          <SelectContent>
-            {clients.map((c) => (
-              <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+            <Select onValueChange={setClientId} value={clientId}>
+            <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Välj kund" />
+            </SelectTrigger>
+            <SelectContent>
+                {clients.map((c) => (
+                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+            </SelectContent>
+            </Select>
+            <Dialog open={isClientDialogOpen} onOpenChange={setIsClientDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button variant="outline" size="icon" title="Lägg till ny kund" type="button">
+                        <Plus className="h-4 w-4" />
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Lägg till ny kund</DialogTitle>
+                    </DialogHeader>
+                    <ClientForm 
+                        workspaceId={workspaceId} 
+                        onSuccess={() => {
+                            setIsClientDialogOpen(false);
+                            router.refresh();
+                        }} 
+                    />
+                </DialogContent>
+            </Dialog>
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -117,6 +148,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
                 selected={startDate}
                 onSelect={setStartDate}
                 initialFocus
+                weekStartsOn={1}
               />
             </PopoverContent>
           </Popover>
@@ -143,6 +175,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
                 selected={endDate}
                 onSelect={setEndDate}
                 initialFocus
+                weekStartsOn={1}
               />
             </PopoverContent>
           </Popover>

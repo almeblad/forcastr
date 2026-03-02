@@ -20,15 +20,20 @@ export default async function Home() {
             <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">F</div>
             Forcastr
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {userId ? (
               <Link href="/dashboard">
                 <Button variant="ghost">Gå till Appen</Button>
               </Link>
             ) : (
-              <Link href="/sign-in">
-                <Button>Logga in</Button>
-              </Link>
+              <>
+                <Link href="/sign-in">
+                  <Button variant="ghost">Logga in</Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button>Kom igång</Button>
+                </Link>
+              </>
             )}
           </div>
         </div>
@@ -45,14 +50,6 @@ export default async function Home() {
             Sluta gissa vad som blir kvar i plånboken. Planera dina uppdrag, optimera din lön
             och prognostisera företagets resultat med precision.
           </p>
-
-          <div className="flex items-center justify-center gap-4 pt-4">
-            <Link href={userId ? "/dashboard" : "/sign-up"}>
-              <Button size="lg" className="h-12 px-8 text-base">
-                Kom igång <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
         </div>
 
         {/* Features Grid */}

@@ -39,7 +39,6 @@ export default async function AssignmentsPage() {
         <h1 className="text-3xl font-bold">Uppdrag & Kunder</h1>
         
         <div className="flex gap-2">
-            <AddClientDialog workspaceId={workspace.id} />
             <AddAssignmentDialog workspaceId={workspace.id} clients={workspaceClients} />
         </div>
       </div>

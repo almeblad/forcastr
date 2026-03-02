@@ -35,8 +35,11 @@ export default async function SalaryPage() {
     ? {
         year: dbTaxSettings.year,
         stateTaxThreshold: dbTaxSettings.stateTaxThreshold,
-        municipalityTaxPercent: Number(dbTaxSettings.municipalityTaxPercent),
-        employerTaxPercent: DEFAULT_TAX_SETTINGS_2026.employerTaxPercent, // Simplified: assuming standard rate
+        municipalityTaxPercent: Number(dbTaxSettings.municipalTaxPercent || 30),
+        countyTaxPercent: Number(dbTaxSettings.countyTaxPercent || 0),
+        employerTaxPercent: DEFAULT_TAX_SETTINGS_2026.employerTaxPercent,
+        churchTaxEnabled: dbTaxSettings.churchTaxEnabled ?? true,
+        burialFeePercent: Number(dbTaxSettings.burialFeePercent || 0.25),
       }
     : DEFAULT_TAX_SETTINGS_2026;
 

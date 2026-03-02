@@ -54,6 +54,11 @@ export const taxSettings = pgTable('tax_settings', {
   workspaceId: uuid('workspace_id').references(() => workspaces.id).notNull(),
   year: integer('year').notNull(),
   stateTaxThreshold: integer('state_tax_threshold').notNull(), // Brytpunkt statlig skatt
-  municipalityTaxPercent: numeric('municipality_tax_percent', { precision: 5, scale: 2 }).default('30.00').notNull(),
+  municipalityCode: text('municipality_code'), // Kommunkod t.ex. "2480" för Umeå
+  municipalityName: text('municipality_name'), // Kommunnamn
+  municipalTaxPercent: numeric('municipal_tax_percent', { precision: 5, scale: 2 }).default('30.00'), // Kommunalskatt
+  countyTaxPercent: numeric('county_tax_percent', { precision: 5, scale: 2 }).default('0'), // Landstingsskatt
+  burialFeePercent: numeric('burial_fee_percent', { precision: 5, scale: 2 }).default('0.30'), // Begravningsavgift
+  churchTaxEnabled: boolean('church_tax_enabled').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

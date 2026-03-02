@@ -32,25 +32,35 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
     name: getMonthName(d.month),
     fullName: new Date(`${d.month}-01`).toLocaleString('sv-SE', { month: 'long' }),
     Intäkt: d.revenue,
+    'Mellanhands avgift': d.brokerFee,
     Lönekostnad: d.salaryCost,
     Resultat: d.profit
   }));
 
   const totals = data.reduce((acc, curr) => ({
     revenue: acc.revenue + curr.revenue,
+    brokerFee: acc.brokerFee + curr.brokerFee,
     cost: acc.cost + curr.salaryCost,
     profit: acc.profit + curr.profit
-  }), { revenue: 0, cost: 0, profit: 0 });
+  }), { revenue: 0, brokerFee: 0, cost: 0, profit: 0 });
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
            <CardHeader className="pb-2">
              <CardTitle className="text-sm font-medium text-gray-500">Prognostiserad Intäkt (Helår)</CardTitle>
            </CardHeader>
            <CardContent>
              <div className="text-2xl font-bold">{formatSEK(totals.revenue)} SEK</div>
+           </CardContent>
+        </Card>
+        <Card>
+           <CardHeader className="pb-2">
+             <CardTitle className="text-sm font-medium text-gray-500">Mellanhands avgift (Helår)</CardTitle>
+           </CardHeader>
+           <CardContent>
+             <div className="text-2xl font-bold text-amber-600">-{formatSEK(totals.brokerFee)} SEK</div>
            </CardContent>
         </Card>
         <Card>
@@ -108,6 +118,7 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
                 />
                 <Legend />
                 <Bar dataKey="Intäkt" fill="var(--chart-1)" radius={[4, 4, 0, 0]} barSize={20} />
+                <Bar dataKey="Mellanhands avgift" fill="var(--chart-5)" radius={[4, 4, 0, 0]} barSize={20} />
                 <Bar dataKey="Lönekostnad" fill="var(--chart-2)" radius={[4, 4, 0, 0]} barSize={20} />
                 <Line type="monotone" dataKey="Resultat" stroke="var(--chart-3)" strokeWidth={2} dot={{ r: 4, fill: 'var(--chart-3)' }} />
               </ComposedChart>

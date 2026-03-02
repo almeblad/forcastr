@@ -47,6 +47,7 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Form states for editing
+  const [editStartDate, setEditStartDate] = useState("");
   const [editEndDate, setEditEndDate] = useState("");
   const [editHourlyRate, setEditHourlyRate] = useState("");
   const [editAllocationPercent, setEditAllocationPercent] = useState("");
@@ -75,7 +76,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
 
   const openEditDialog = (assignment: Assignment) => {
     setEditingAssignment(assignment);
-    setEditEndDate(assignment.endDate); // Assuming YYYY-MM-DD format from DB or valid date string
+    setEditStartDate(assignment.startDate);
+    setEditEndDate(assignment.endDate);
     setEditHourlyRate(assignment.hourlyRate.toString());
     setEditAllocationPercent(assignment.allocationPercent.toString());
   };
@@ -91,6 +93,7 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          startDate: editStartDate,
           endDate: editEndDate,
           hourlyRate: parseInt(editHourlyRate),
           allocationPercent: parseInt(editAllocationPercent),
@@ -199,6 +202,18 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
           
           {editingAssignment && (
             <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-startDate" className="text-right">
+                  Startdatum
+                </Label>
+                <Input
+                  id="edit-startDate"
+                  type="date"
+                  value={editStartDate}
+                  onChange={(e) => setEditStartDate(e.target.value)}
+                  className="col-span-3"
+                />
+              </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-endDate" className="text-right">
                   Slutdatum

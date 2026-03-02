@@ -33,7 +33,15 @@ export async function POST(req: Request) {
   if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
   const body = await req.json();
-  const { municipalityTaxPercent, stateTaxThreshold } = body;
+  const { 
+    municipalityCode, 
+    municipalityName, 
+    municipalTaxPercent, 
+    countyTaxPercent, 
+    burialFeePercent,
+    churchTaxEnabled,
+    stateTaxThreshold 
+  } = body;
 
   const workspace = await db.query.workspaces.findFirst({
     where: eq(workspaces.userId, user.id),
@@ -45,7 +53,6 @@ export async function POST(req: Request) {
 
   const currentYear = 2026;
 
-  // Check if settings exist
   const existingSettings = await db.query.taxSettings.findFirst({
     where: and(
         eq(taxSettings.workspaceId, workspace.id),
@@ -53,19 +60,25 @@ export async function POST(req: Request) {
     ),
   });
 
+  const settingsData = {
+    municipalityCode: municipalityCode || null,
+    municipalityName: municipalityName || null,
+    municipalTaxPercent: municipalTaxPercent?.toString() || '30.00',
+    countyTaxPercent: countyTaxPercent?.toString() || '0',
+    burialFeePercent: burialFeePercent?.toString() || '0.30',
+    stateTaxThreshold: stateTaxThreshold || 643000,
+    churchTaxEnabled: churchTaxEnabled ?? true,
+  };
+
   if (existingSettings) {
       await db.update(taxSettings)
-        .set({ 
-            municipalityTaxPercent: municipalityTaxPercent.toString(),
-            stateTaxThreshold,
-        })
+        .set(settingsData)
         .where(eq(taxSettings.id, existingSettings.id));
   } else {
       await db.insert(taxSettings).values({
         workspaceId: workspace.id,
         year: currentYear,
-        municipalityTaxPercent: municipalityTaxPercent.toString(),
-        stateTaxThreshold,
+        ...settingsData,
       });
   }
 

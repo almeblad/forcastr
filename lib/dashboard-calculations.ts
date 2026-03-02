@@ -9,6 +9,7 @@ import {
 export type MonthlyFinancials = {
   month: string; // YYYY-MM
   revenue: number;
+  brokerFee: number;
   salaryCost: number;
   profit: number;
 };
@@ -47,18 +48,20 @@ export const calculateMonthlyFinancials = (
 
     // 1. Calculate Revenue
     let totalRevenue = 0;
+    let totalBrokerFee = 0;
     
     // Find active assignments for this month
     assignments.forEach(assignment => {
       if (assignment.startDate <= month + '-31' && assignment.endDate >= month + '-01') {
-        const { netRevenue } = calculateConsultantRevenue(
+        const { grossRevenue, brokerFee } = calculateConsultantRevenue(
             assignment.hourlyRate,
             assignment.allocationPercent,
             21, // Avg working days base
             Number(assignment.brokerFeePercent || 0),
             absenceDays // Pass absence days to reduce billable time
         );
-        totalRevenue += netRevenue;
+        totalRevenue += (grossRevenue - brokerFee);
+        totalBrokerFee += brokerFee;
       }
     });
 
@@ -73,6 +76,7 @@ export const calculateMonthlyFinancials = (
     return {
       month,
       revenue: totalRevenue,
+      brokerFee: totalBrokerFee,
       salaryCost: totalCost,
       profit
     };
