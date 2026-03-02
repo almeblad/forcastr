@@ -55,40 +55,40 @@ export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <Card>
-           <CardHeader className="pb-1">
+        <Card className="gap-2">
+           <CardHeader className="pb-0">
              <CardTitle className="text-sm font-medium text-gray-500">Fakturerat (Helår)</CardTitle>
            </CardHeader>
            <CardContent>
              <div className="text-2xl font-bold">{formatSEK(totals.revenue)} SEK</div>
            </CardContent>
         </Card>
-        <Card>
-           <CardHeader className="pb-1">
+        <Card className="gap-2">
+           <CardHeader className="pb-0">
              <CardTitle className="text-sm font-medium text-gray-500">Inbetalt (Helår)</CardTitle>
            </CardHeader>
            <CardContent>
              <div className="text-2xl font-bold text-green-600">{formatSEK(totals.cashIn)} SEK</div>
            </CardContent>
         </Card>
-        <Card>
-           <CardHeader className="pb-1">
+        <Card className="gap-2">
+           <CardHeader className="pb-0">
              <CardTitle className="text-sm font-medium text-gray-500">Mellanhands avgift</CardTitle>
            </CardHeader>
            <CardContent>
              <div className="text-2xl font-bold text-amber-600">-{formatSEK(totals.brokerFee)} SEK</div>
            </CardContent>
         </Card>
-        <Card>
-           <CardHeader className="pb-1">
+        <Card className="gap-2">
+           <CardHeader className="pb-0">
              <CardTitle className="text-sm font-medium text-gray-500">Lönekostnad</CardTitle>
            </CardHeader>
            <CardContent>
              <div className="text-2xl font-bold">{formatSEK(totals.cost)} SEK</div>
            </CardContent>
         </Card>
-        <Card>
-           <CardHeader className="pb-1">
+        <Card className="gap-2">
+           <CardHeader className="pb-0">
              <CardTitle className="text-sm font-medium text-gray-500">Resultat</CardTitle>
            </CardHeader>
            <CardContent>
