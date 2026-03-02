@@ -49,8 +49,6 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, mont
   const [salaries, setSalaries] = useState(initialSalaryMap);
   const [syncAllMonths, setSyncAllMonths] = useState(false);
 
-  console.log('Tax settings:', taxSettings);
-
   // Debounce the API call to avoid "Too Many Requests"
   const debouncedSave = useDebouncedCallback(async (monthKey: string, grossSalary: number) => {
     try {
