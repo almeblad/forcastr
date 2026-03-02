@@ -210,8 +210,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
           
           {editingAssignment && (
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-startDate" className="text-right">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="edit-startDate" className="text-right col-span-2">
                   Startdatum
                 </Label>
                 <Input
@@ -222,8 +222,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
                   className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-endDate" className="text-right">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="edit-endDate" className="text-right col-span-2">
                   Slutdatum
                 </Label>
                 <Input
@@ -234,8 +234,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
                   className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-hourlyRate" className="text-right">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="edit-hourlyRate" className="text-right col-span-2">
                   Timpris
                 </Label>
                 <Input
@@ -246,8 +246,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
                   className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-allocation" className="text-right">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="edit-allocation" className="text-right col-span-2">
                   Beläggning (%)
                 </Label>
                 <Input
@@ -260,8 +260,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
                   className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-paymentTerms" className="text-right">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="edit-paymentTerms" className="text-right col-span-2">
                   Betalningsvillkor (dgr)
                 </Label>
                 <Input
@@ -274,8 +274,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
                   className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-brokerFee" className="text-right">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <Label htmlFor="edit-brokerFee" className="text-right col-span-2">
                   Mellanhands avgift (%)
                 </Label>
                 <Input
