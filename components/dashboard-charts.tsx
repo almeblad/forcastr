@@ -24,19 +24,25 @@ const formatSEK = (value: number) => {
 
 const getMonthName = (monthStr: string) => {
   const date = new Date(`${monthStr}-01`);
-  return date.toLocaleString('sv-SE', { month: 'short' }).replace('.', '');
+  const month = date.toLocaleString('sv-SE', { month: 'short' }).replace('.', '');
+  return month.charAt(0).toUpperCase() + month.slice(1);
 };
 
 export function DashboardCharts({ data }: { data: MonthlyFinancials[] }) {
-  const chartData = data.map(d => ({
-    name: getMonthName(d.month),
-    fullName: new Date(`${d.month}-01`).toLocaleString('sv-SE', { month: 'long' }),
-    Intäkt: d.revenue,
-    'Kassaflöde': d.cashIn,
-    'Mellanhands avgift': d.brokerFee,
-    Lönekostnad: d.salaryCost,
-    Resultat: d.profit
-  }));
+  const chartData = data.map(d => {
+    const fullMonth = new Date(`${d.month}-01`).toLocaleString('sv-SE', { month: 'long' });
+    const capitalizedFullMonth = fullMonth.charAt(0).toUpperCase() + fullMonth.slice(1);
+    
+    return {
+      name: getMonthName(d.month),
+      fullName: capitalizedFullMonth,
+      Intäkt: d.revenue,
+      'Kassaflöde': d.cashIn,
+      'Mellanhands avgift': d.brokerFee,
+      Lönekostnad: d.salaryCost,
+      Resultat: d.profit
+    };
+  });
 
   const totals = data.reduce((acc, curr) => ({
     revenue: acc.revenue + curr.revenue,
