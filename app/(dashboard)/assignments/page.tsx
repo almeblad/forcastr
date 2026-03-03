@@ -30,7 +30,8 @@ export default async function AssignmentsPage() {
   // Manual join for display (simplified)
   const assignmentsWithClientName = activeAssignments.map(a => ({
       ...a,
-      clientName: workspaceClients.find(c => c.id === a.clientId)?.name || "Okänd kund"
+      clientName: workspaceClients.find(c => c.id === a.clientId)?.name || "Okänd kund",
+      brokerFeePercent: a.brokerFeePercent ?? "0",
   }));
 
   return (
