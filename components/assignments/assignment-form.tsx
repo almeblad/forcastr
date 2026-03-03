@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
+import { sv } from "date-fns/locale";
 import { CalendarIcon, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -46,6 +47,8 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
   const [hasBroker, setHasBroker] = useState(false);
   const [brokerFee, setBrokerFee] = useState("0");
 
+  const [isStartDateOpen, setIsStartDateOpen] = useState(false);
+  const [isEndDateOpen, setIsEndDateOpen] = useState(false);
   const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -131,7 +134,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2 flex flex-col">
           <Label>Startdatum</Label>
-          <Popover>
+          <Popover open={isStartDateOpen} onOpenChange={setIsStartDateOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant={"outline"}
@@ -140,7 +143,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
                   !startDate && "text-muted-foreground"
                 )}
               >
-                {startDate ? format(startDate, "PPP") : <span>Välj datum</span>}
+                {startDate ? format(startDate, "PPP", { locale: sv }) : <span>Välj datum</span>}
                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -148,7 +151,10 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
               <Calendar
                 mode="single"
                 selected={startDate}
-                onSelect={setStartDate}
+                onSelect={(date) => {
+                  setStartDate(date);
+                  setIsStartDateOpen(false);
+                }}
                 initialFocus
                 weekStartsOn={1}
               />
@@ -158,7 +164,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
 
         <div className="space-y-2 flex flex-col">
           <Label>Slutdatum</Label>
-          <Popover>
+          <Popover open={isEndDateOpen} onOpenChange={setIsEndDateOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant={"outline"}
@@ -167,7 +173,7 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
                   !endDate && "text-muted-foreground"
                 )}
               >
-                {endDate ? format(endDate, "PPP") : <span>Välj datum</span>}
+                {endDate ? format(endDate, "PPP", { locale: sv }) : <span>Välj datum</span>}
                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -175,7 +181,10 @@ export function AssignmentForm({ workspaceId, clients, onSuccess }: AssignmentFo
               <Calendar
                 mode="single"
                 selected={endDate}
-                onSelect={setEndDate}
+                onSelect={(date) => {
+                  setEndDate(date);
+                  setIsEndDateOpen(false);
+                }}
                 initialFocus
                 weekStartsOn={1}
               />

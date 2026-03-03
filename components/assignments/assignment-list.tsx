@@ -28,7 +28,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { sv } from "date-fns/locale";
-import { Pencil, Trash2, Loader2 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { CalendarIcon, Pencil, Trash2, Loader2 } from "lucide-react";
 
 type Assignment = {
   id: string;
@@ -49,8 +52,10 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Form states for editing
-  const [editStartDate, setEditStartDate] = useState("");
-  const [editEndDate, setEditEndDate] = useState("");
+  const [editStartDate, setEditStartDate] = useState<Date>();
+  const [editEndDate, setEditEndDate] = useState<Date>();
+  const [isStartDateOpen, setIsStartDateOpen] = useState(false);
+  const [isEndDateOpen, setIsEndDateOpen] = useState(false);
   const [editHourlyRate, setEditHourlyRate] = useState("");
   const [editAllocationPercent, setEditAllocationPercent] = useState("");
   const [editPaymentTerms, setEditPaymentTerms] = useState("");
@@ -80,8 +85,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
 
   const openEditDialog = (assignment: Assignment) => {
     setEditingAssignment(assignment);
-    setEditStartDate(assignment.startDate);
-    setEditEndDate(assignment.endDate);
+    setEditStartDate(assignment.startDate ? new Date(assignment.startDate) : undefined);
+    setEditEndDate(assignment.endDate ? new Date(assignment.endDate) : undefined);
     setEditHourlyRate(assignment.hourlyRate.toString());
     setEditAllocationPercent(assignment.allocationPercent.toString());
     setEditPaymentTerms(assignment.paymentTerms ? assignment.paymentTerms.toString() : "30");
@@ -89,7 +94,7 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
   };
 
   const handleUpdate = async () => {
-    if (!editingAssignment) return;
+    if (!editingAssignment || !editStartDate || !editEndDate) return;
 
     setIsLoading(true);
     try {
@@ -99,8 +104,8 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          startDate: editStartDate,
-          endDate: editEndDate,
+          startDate: editStartDate.toISOString(),
+          endDate: editEndDate.toISOString(),
           hourlyRate: parseInt(editHourlyRate),
           allocationPercent: parseInt(editAllocationPercent),
           paymentTerms: parseInt(editPaymentTerms),
@@ -214,25 +219,67 @@ export function AssignmentList({ assignments }: { assignments: Assignment[] }) {
                 <Label htmlFor="edit-startDate" className="text-right col-span-2">
                   Startdatum
                 </Label>
-                <Input
-                  id="edit-startDate"
-                  type="date"
-                  value={editStartDate}
-                  onChange={(e) => setEditStartDate(e.target.value)}
-                  className="col-span-3"
-                />
+                <div className="col-span-3">
+                  <Popover open={isStartDateOpen} onOpenChange={setIsStartDateOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !editStartDate && "text-muted-foreground"
+                        )}
+                      >
+                        {editStartDate ? format(editStartDate, "PPP", { locale: sv }) : <span>Välj datum</span>}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={editStartDate}
+                        onSelect={(date) => {
+                          setEditStartDate(date);
+                          setIsStartDateOpen(false);
+                        }}
+                        initialFocus
+                        weekStartsOn={1}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
               <div className="grid grid-cols-5 items-center gap-4">
                 <Label htmlFor="edit-endDate" className="text-right col-span-2">
                   Slutdatum
                 </Label>
-                <Input
-                  id="edit-endDate"
-                  type="date"
-                  value={editEndDate}
-                  onChange={(e) => setEditEndDate(e.target.value)}
-                  className="col-span-3"
-                />
+                <div className="col-span-3">
+                  <Popover open={isEndDateOpen} onOpenChange={setIsEndDateOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !editEndDate && "text-muted-foreground"
+                        )}
+                      >
+                        {editEndDate ? format(editEndDate, "PPP", { locale: sv }) : <span>Välj datum</span>}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={editEndDate}
+                        onSelect={(date) => {
+                          setEditEndDate(date);
+                          setIsEndDateOpen(false);
+                        }}
+                        initialFocus
+                        weekStartsOn={1}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
               <div className="grid grid-cols-5 items-center gap-4">
                 <Label htmlFor="edit-hourlyRate" className="text-right col-span-2">

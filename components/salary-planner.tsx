@@ -68,18 +68,23 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, mont
 
   // Batch save for "Sync All" mode
   const debouncedBatchSave = useDebouncedCallback(async (grossSalary: number) => {
-    MONTHS.forEach(m => {
-      const key = `2026-${m.id}`;
-      fetch("/api/salary", {
+    try {
+      const updates = MONTHS.map(m => ({
+        month: `2026-${m.id}`,
+        grossSalary
+      }));
+
+      await fetch("/api/salary/batch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspaceId,
-          month: key,
-          grossSalary,
+          updates,
         }),
-      }).catch(e => console.error(e));
-    });
+      });
+    } catch (e) {
+      console.error("Failed to batch save salary", e);
+    }
   }, 1000);
 
   const handleSalaryChange = (monthId: string, newValue: number) => {
@@ -106,6 +111,7 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, mont
     let totalGross = 0;
     let totalCost = 0;
     let totalNet = 0;
+    let totalStateTax = 0;
 
     MONTHS.forEach((m) => {
       const key = `2026-${m.id}`;
@@ -117,18 +123,26 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, mont
       totalGross += gross;
       totalCost += cost.totalCost;
       totalNet += net.netSalary;
+      totalStateTax += net.stateTax;
     });
 
-    return { totalGross, totalCost, totalNet };
+    return { totalGross, totalCost, totalNet, totalStateTax };
   }, [salaries, taxSettings]);
 
   const progressToThreshold = (totals.totalGross / taxSettings.stateTaxThreshold) * 100;
+
+  // Calculate total municipal tax rate for display
+  const totalMunicipalRate = 
+    taxSettings.municipalityTaxPercent + 
+    (taxSettings.countyTaxPercent || 0) + 
+    (taxSettings.burialFeePercent || 0) + 
+    (taxSettings.churchTaxEnabled ? 1 : 0); // Approximate church tax as 1% for display or fetch real value if available
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-1">
             <CardTitle className="text-sm font-medium text-gray-500">Total Kostnad Bolag</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1 text-xs">
@@ -151,21 +165,35 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, mont
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-1">
             <CardTitle className="text-sm font-medium text-gray-500">Total Skatt</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatSEK(Math.round(totals.totalGross - totals.totalNet))} SEK</div>
-            <div className="text-xs text-gray-500 mt-1">
-              Kommunalskatt: {taxSettings.municipalityTaxPercent}% 
-              (inkl begravningsavgift)
-              {taxSettings.churchTaxEnabled ? ' + kyrkoavgift' : ''}
+            <div className="text-xs text-gray-500 mt-1 space-y-1">
+              <div>
+                Kommunal: {taxSettings.municipalityTaxPercent}%
+              </div>
+              {taxSettings.countyTaxPercent && Number(taxSettings.countyTaxPercent) > 0 && (
+                <div>
+                  Landsting: {taxSettings.countyTaxPercent}%
+                </div>
+              )}
+              <div>
+                 Begravning: {taxSettings.burialFeePercent || 0.25}%
+                 {taxSettings.churchTaxEnabled ? ' + Kyrkoavgift' : ''}
+              </div>
+              {totals.totalStateTax > 0 && (
+                <div className="text-amber-600 font-medium pt-1">
+                  Varav statlig skatt: {formatSEK(Math.round(totals.totalStateTax))} kr
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-1">
             <CardTitle className="text-sm font-medium text-gray-500">Total Nettolön</CardTitle>
           </CardHeader>
           <CardContent>
@@ -248,28 +276,40 @@ export function SalaryPlanner({ workspaceId, initialSalaryMap, taxSettings, mont
                     <span className="font-mono">-{formatSEK(Math.round(costs.employerTax))} kr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Skatt</span>
-                    <span className="font-mono text-red-500">-{formatSEK(Math.round(net.totalTax))} kr</span>
+                    <span className="text-muted-foreground">Skatt (grund)</span>
+                    <span className="font-mono text-red-500">-{formatSEK(Math.round(net.totalTax - net.stateTax))} kr</span>
                   </div>
-                  <div className="flex justify-between font-medium">
+                  {net.stateTax > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground text-amber-600 font-medium">Statlig skatt</span>
+                      <span className="font-mono text-amber-600 font-medium">-{formatSEK(Math.round(net.stateTax))} kr</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-medium border-t pt-1 mt-1">
                     <span>Netto</span>
                     <span className="font-mono text-green-600">{formatSEK(Math.round(net.netSalary))} kr</span>
                   </div>
 
-                  {stats && stats.projectedRevenue > 0 && (
-                    <div className={`flex justify-between text-xs font-medium border-t pt-1 mt-1 ${stats.projectedRevenue >= costs.totalCost ? 'text-green-700' : 'text-red-600'
-                      }`}>
-                      <span>Resultat</span>
-                      <span className="font-mono">
-                        {stats.projectedRevenue >= costs.totalCost ? '+' : ''}
-                        {formatSEK(Math.round(stats.projectedRevenue - costs.totalCost))} kr
-                      </span>
-                    </div>
+                  {stats && (
+                    <>
+                      <div className="flex justify-between text-xs text-muted-foreground border-t pt-1 mt-1">
+                        <span>Intäkt</span>
+                        <span className="font-mono">{formatSEK(Math.round(stats.projectedRevenue))} kr</span>
+                      </div>
+                      <div className={`flex justify-between text-xs font-medium ${stats.projectedRevenue >= costs.totalCost ? 'text-green-700' : 'text-red-600'
+                        }`}>
+                        <span>Resultat</span>
+                        <span className="font-mono">
+                          {stats.projectedRevenue >= costs.totalCost ? '+' : ''}
+                          {formatSEK(Math.round(stats.projectedRevenue - costs.totalCost))} kr
+                        </span>
+                      </div>
+                    </>
                   )}
-                  {stats && stats.projectedRevenue === 0 && (
-                    <div className="text-xs text-slate-400 border-t pt-1 mt-1">
-                      Inga intäkter
-                    </div>
+                  {!stats && (
+                     <div className="text-xs text-slate-400 border-t pt-1 mt-1">
+                       Ingen data
+                     </div>
                   )}
                 </div>
               </div>
